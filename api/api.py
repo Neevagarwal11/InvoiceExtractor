@@ -14,6 +14,11 @@ load_dotenv('.flaskenv')
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 genai.configure(api_key=GOOGLE_API_KEY)
 
+FRONTEND_ORIGIN = os.getenv("FRONTEND_ORIGIN", "*")
+CORS(app, resources={r"/api/*": {"origins": FRONTEND_ORIGIN}})
+
+
+
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
 app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(__file__), UPLOAD_FOLDER)

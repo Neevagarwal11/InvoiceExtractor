@@ -202,6 +202,7 @@ const normalizeInvoiceData = (data: any): InvoiceData => {
 const ALLOWED_TYPES = ['application/pdf', 'image/png', 'image/jpeg', 'image/tiff'];
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000";
 
 
 const processFile = async (file: File) => {
@@ -226,7 +227,7 @@ const processFile = async (file: File) => {
   formData.append("file", file);
 
   try {
-    const response = await fetch("http://localhost:5000/api/extract", {
+    const response = await fetch(`${API_URL}/api/extract`, {
       method: "POST",
       body: formData,
     });
