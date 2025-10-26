@@ -68,32 +68,34 @@ const normalizeInvoiceData = (data: any): InvoiceData => {
     values.find(v => v !== undefined && v !== null) ?? 'N/A';
 
   return {
-    invoice_details: {
+    invoice_details: {      //Invoice Details
       invoice_no: getFirstValid(
         data.invoice_details?.invoice_no,
+        data.invoice_details?.invoice_number,
         data.order_details?.order_number,
         data.order_number,
         'N/A'
       ),
       date: getFirstValid(
         data.invoice_details?.date,
+        data.invoice_details?.invoice_date,
         data.order_details?.order_placed_date,
+        data.order_details?.order_date,
         data.date,
         'N/A'
       ),
     },
-    seller_details: {
+    seller_details: {         //Seller Details
       name: getFirstValid(
         data.seller_details?.name,
+        data.seller_details?.seller_name,
         data.order_details?.sold_by,
         data.sold_by,
         'N/A'
       ),
       address: (name => {
-        // If seller name is N/A, return N/A for address
         if (name === 'N/A') return 'Online Seller';
         
-        // Otherwise, try to get address or default to "Online Seller"
         return getFirstValid(
           data.seller_details?.address,
           data.seller_details?.name,
@@ -119,11 +121,13 @@ const normalizeInvoiceData = (data: any): InvoiceData => {
     'N/A'
   ),
   address: (() => {
-    // Try to get complete address first
+    //get complete address first
     const fullAddress = getFirstValid(
       data.issued_to?.address,
       formatAddress(data.shipping_address),
+      formatAddress(data.shipping_address.address),
       formatAddress(data.order_details?.shipping_address),
+      formatAddress(data.order_details?.shipping_address.address),
       null
     );
     
@@ -165,6 +169,7 @@ const normalizeInvoiceData = (data: any): InvoiceData => {
     summary: {
       total: getFirstValid(
         data.summary?.total,
+        data.total?.total_amount,
         data.order_summary?.total,
         data.payment_summary?.total,
         0
@@ -177,6 +182,8 @@ const normalizeInvoiceData = (data: any): InvoiceData => {
       ),
       tax: getFirstValid(
         data.summary?.tax,
+        data.total?.tax_amount,
+        data.total?.tax,
         data.order_summary?.est_tax,
         data.payment_summary?.estimated_tax,
         0

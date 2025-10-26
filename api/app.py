@@ -14,7 +14,7 @@ load_dotenv('.flaskenv')
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 genai.configure(api_key=GOOGLE_API_KEY)
 
-FRONTEND_ORIGIN = os.getenv("FRONTEND_ORIGIN", "*")
+FRONTEND_ORIGIN = os.getenv("FRONTEND_ORIGIN", "https://invoice-extractor-pi.vercel.app/")
 CORS(app, resources={r"/api/*": {"origins": FRONTEND_ORIGIN}})
 
 
