@@ -85,9 +85,13 @@ const normalizeInvoiceData = (data: any): InvoiceData => {
         'N/A'
       ),
     },
+
+
+
     seller_details: {         //Seller Details
       name: getFirstValid(
         data.seller_details?.name,
+        data.sold_by?.name,
         data.seller_details?.seller_name,
         data.order_details?.sold_by,
         data.sold_by,
@@ -98,6 +102,7 @@ const normalizeInvoiceData = (data: any): InvoiceData => {
         
         return getFirstValid(
           data.seller_details?.address,
+          data.sold_by?.address,
           data.seller_details?.name,
         data.order_details?.sold_by,
         data.sold_by,
@@ -112,7 +117,10 @@ const normalizeInvoiceData = (data: any): InvoiceData => {
         'Online Seller'
       )),
     },
-    issued_to: {
+
+
+
+    issued_to: {         //Issued To  
   name: getFirstValid(
     data.issued_to?.name,
     data.shipping_address?.name,
@@ -120,45 +128,44 @@ const normalizeInvoiceData = (data: any): InvoiceData => {
     data.billing_address?.name,
     'N/A'
   ),
-  address: (() => {
-    //get complete address first
-    const fullAddress = getFirstValid(
-      data.issued_to?.address,
-      formatAddress(data.shipping_address),
-      formatAddress(data.shipping_address.address),
-      formatAddress(data.order_details?.shipping_address),
-      formatAddress(data.order_details?.shipping_address.address),
-      null
-    );
-    
-    if (fullAddress && fullAddress !== 'N/A') return fullAddress;
-
-    // If no complete address, try to build from fragments
-    const addressSources = [
-      data.billing_address,
-      data.shipping_address,
-      data.order_details?.shipping_address,
-      data.shipping_address,
-      data.issued_to
-    ].filter(Boolean);
-
-    for (const source of addressSources) {
-      const fragments = [
-        source.street || source.address_line1,
-        source.address_line2,
-        source.city,
-        source.city_state_zip,
-        source.state,
-        source.zip || source.postal_code
-      ].filter(Boolean);
-
-      if (fragments.length > 0) {
-        return fragments.join(', ');
-      }
-    }
-
-    return 'N/A';
-  })(),
+   address: (() => {
+        const fullAddress = getFirstValid(
+          data.issued_to?.address,
+          data.billing_address?.address,
+          data.shipping_address?.address,
+          data.sold_to?.address,
+          data.buyer?.address,
+          formatAddress(data.shipping_address),
+          formatAddress(data.shipping_address?.address),
+          formatAddress(data.billing_address?.address),
+          formatAddress(data.buyer?.address),
+          formatAddress(data.issued_to?.address),
+          formatAddress(data.sold_to?.address),
+          formatAddress(data.order_details?.shipping_address),
+          'N/A'
+        );
+        if (fullAddress && fullAddress !== 'N/A') return fullAddress;
+        const addressSources = [
+          data.billing_address,
+          data.shipping_address,
+          data.issued_to,
+          data.sold_to,
+          data.buyer,
+          data.order_details?.shipping_address,
+          data.issued_to
+        ].filter(Boolean);
+        for (const source of addressSources) {
+          const fragments = [
+            source.street || source.address_line1 || source.address1,
+            source.address_line2,
+            source.city,
+            source.state,
+            source.zip || source.postal_code || source.postcode
+          ].filter(Boolean);
+          if (fragments.length > 0) return fragments.join(', ');
+        }
+        return 'N/A';
+      })(),
   email: getFirstValid(
     data.issued_to?.email,
     data.shipping_address?.email,
@@ -197,6 +204,8 @@ const normalizeInvoiceData = (data: any): InvoiceData => {
     },
   };
 };
+
+
 
 
   const [isDragging, setIsDragging] = useState(false);

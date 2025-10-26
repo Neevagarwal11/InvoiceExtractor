@@ -4,7 +4,7 @@ from pathlib import Path
 from flask_cors import CORS
 import os
 from werkzeug.utils import secure_filename
-from dotenv import load_dotenv
+from dotenv import load_dotenv # type: ignore
 
 app = Flask(__name__)
 CORS(app)
@@ -14,10 +14,8 @@ load_dotenv('.flaskenv')
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 genai.configure(api_key=GOOGLE_API_KEY)
 
-FRONTEND_ORIGIN = os.getenv("FRONTEND_ORIGIN", "https://invoice-extractor-pi.vercel.app/")
-CORS(app, resources={r"/api/*": {"origins": FRONTEND_ORIGIN}})
-
-
+FRONTEND_ORIGIN = os.getenv("FRONTEND_ORIGIN", "https://invoice-extractor-pi.vercel.app/" , "localhost:3000")
+CORS(app, resources={r"/api/*": {"origins": [FRONTEND_ORIGIN, "http://localhost:3000"]}})
 
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
