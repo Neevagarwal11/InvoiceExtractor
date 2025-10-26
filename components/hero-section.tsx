@@ -72,15 +72,22 @@ const normalizeInvoiceData = (data: any): InvoiceData => {
       invoice_no: getFirstValid(
         data.invoice_details?.invoice_no,
         data.invoice_details?.invoice_number,
+        data.invoice_number,
+        data.invoice_no,
         data.order_details?.order_number,
+        data.order_no,
         data.order_number,
         'N/A'
       ),
       date: getFirstValid(
         data.invoice_details?.date,
         data.invoice_details?.invoice_date,
+        data.invoice_date,
+        data.invoice_details?.order_date,
         data.order_details?.order_placed_date,
         data.order_details?.order_date,
+        data.order_date,
+        data.ordered_on,
         data.date,
         'N/A'
       ),
